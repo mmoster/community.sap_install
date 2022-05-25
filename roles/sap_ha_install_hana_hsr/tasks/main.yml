@@ -19,20 +19,28 @@
   tags:
     - hsr_logmode
 
+# Steps only running on secondary nodes
 - name: "SAP HSR - PKI Files"
   include_tasks: 
     file: pki_files.yml
     apply: 
-      tags: 
-        - hsr_pki  
+      tags: hsr_pki  
       vars:
         __sap_ha_install_hana_hsr_secpath: "/usr/sap/{{ sap_ha_install_hana_hsr_sid }}/SYS/global/security/rsecssfs"
   when: sap_ha_install_hana_hsr_role == 'secondary' 
   tags:
     - hsr_pki
 
+# Steps only executed on a primary node
 - name: "SAP HSR - Run Backup"
-  include_tasks: run_backup.yml
+  include_tasks: 
+    file: run_backup.yml
+    apply:
+      become: true
+      become_user: "{{ sap_ha_install_hana_hsr_sid | lower }}adm"
+      tags: hsr_backup
+  when:
+    - sap_ha_install_hana_hsr_role == 'primary'
   tags:
     - hsr_backup
 
