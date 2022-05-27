@@ -20,6 +20,6 @@
   when:
     - sap_ha_install_pacemaker_role == 'secondary'
 
-- name: "SAP Pacemaker Setup - print pcs reg"
-  debug:
-    var: pcs_host_auth_reg
+#- name: "SAP Pacemaker Setup - print pcs reg"
+#  debug:
+#    var: pcs_host_auth_reg
