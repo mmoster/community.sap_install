@@ -52,25 +52,3 @@
   include_tasks: stonith_config.yml
   when:
     - sap_ha_install_pacemaker_role == 'primary'
-
-- name: SAP Pacemaker Part 3 - Sudoer Configuration
-  include_tasks: cluster_sudoer.yml
-  tags:
-    - pacemaker
-
-- name: SAP Pacemaker Part 3 - Resource Configuration
-  include_tasks: cluster_resources.yml
-  tags:
-    - pacemaker
-  when:
-    - sap_ha_install_pacemaker_role == 'primary'
-
-- name: "SAP Pacemaker Part 4 - srhooks Configuration"
-  include_tasks: cluster_srhook.yml
-  tags:
-    - srhook
-
-- name: SAP Pacemaker Part 5 - Constraints Configuration
-  include_tasks: cluster_constraint.yml
-  tags:
-    - constraint
