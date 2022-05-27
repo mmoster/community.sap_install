@@ -1,16 +1,19 @@
 ---
 - name: "SAP Pacemaker Setup - [A] Check RHEL HA Repos"
-  shell: |
+  ansible.builtin.shell: |
     yum repolist
   args:
     executable: /bin/bash
+    warn: no
   become: true
   become_user: root
   register: sap_ha_install_pacemaker_check_ha_repos
   changed_when: "'highavailability' in sap_ha_install_pacemaker_check_ha_repos.stdout"
-- name: "SAP Pacemaker Setup - [A] Print RHEL HA Repos"
-  debug:
-    var: sap_ha_install_pacemaker_check_ha_repos
+
+#- name: "SAP Pacemaker Setup - [A] Print RHEL HA Repos"
+#  debug:
+#    var: sap_ha_install_pacemaker_check_ha_repos
+
 # Enable Repos
 - name: SAP Pacemaker Setup - [A] Subscription Manager - Enable RHEL HA Repos
   command: 'subscription-manager repos --enable="{{ item }}"'
