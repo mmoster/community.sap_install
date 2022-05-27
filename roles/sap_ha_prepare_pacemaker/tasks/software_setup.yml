@@ -8,57 +8,56 @@
   become: true
   become_user: root
   register: sap_ha_install_pacemaker_check_ha_repos
-  changed_when: "'highavailability' in sap_ha_install_pacemaker_check_ha_repos.stdout"
+  changed_when: false
 
-#- name: "SAP Pacemaker Setup - [A] Print RHEL HA Repos"
-#  debug:
-#    var: sap_ha_install_pacemaker_check_ha_repos
+- name: "SAP Pacemaker Setup - [A] Print RHEL HA Repos"
+  ansible.builtin.debug:
+    var: sap_ha_install_pacemaker_check_ha_repos.stdout_lines
 
 # Enable Repos
 - name: SAP Pacemaker Setup - [A] Subscription Manager - Enable RHEL HA Repos
-  command: 'subscription-manager repos --enable="{{ item }}"'
+  ansible.builtin.command: 'subscription-manager repos --enable="{{ item }}"'
   with_items: "{{ sap_ha_install_pacemaker_rhsm_repos }}"
   when: 
-  - sap_ha_install_pacemaker_check_ha_repos.changed == false
-#  - subscription_status.rc!=0 
+  - "'highavailability' not in sap_ha_install_pacemaker_check_ha_repos.stdout"
 
 # Install Packages
 - name: SAP Pacemaker Setup - [A] Install Packages
-  yum: 
+  ansible.builtin.yum: 
     name: '{{ sap_ha_install_pacemaker_packages }}'
     state: present
 
 # Install Packages - Vendor Specific
 - name: SAP Pacemaker Setup - [A] Install Packages - Vendor Specific
-  yum: 
+  ansible.builtin.yum: 
     name: "{{ vars['sap_ha_install_pacemaker_packages_' + sap_ha_install_pacemaker_type] }}"
     state: present
   when: 
     - sap_ha_install_pacemaker_type is defined
-    - sap_ha_install_pacemaker_packages_ is defined
+    - vars['sap_ha_install_pacemaker_packages_' + sap_ha_install_pacemaker_type] is defined
 
 - name: SAP Pacemaker Setup - [A] Yum clean all
   command: 'yum clean all'
   args:
     warn: false
     
-- name: SAP Pacemaker Setup - [A] Yum search sap-
-  command: 'yum -y search sap-'
+#- name: SAP Pacemaker Setup - [A] Yum search sap-
+#  command: 'yum -y search sap-'
 
 - name: SAP Pacemaker Setup - [A] Clear dnf cache
   file:
     path: /var/cache/dnf
     state: absent
 
-- name: SAP Pacemaker Setup - [A] Clear rhsm packages
-  file:
-    path: /var/lib/rhsm/packages/packages.json
-    state: absent
+#- name: SAP Pacemaker Setup - [A] Clear rhsm packages
+#  file:
+#    path: /var/lib/rhsm/packages/packages.json
+#    state: absent
 
-- name: SAP Pacemaker Setup - [A] Restart service rhsmcertd
-  service:
-    name: rhsmcertd
-    state: restarted
+#- name: SAP Pacemaker Setup - [A] Restart service rhsmcertd
+#  service:
+#    name: rhsmcertd
+#    state: restarted
 
 # - name: SAP Pacemaker Setup - [A] Install Azure CLI
 #   shell: |
