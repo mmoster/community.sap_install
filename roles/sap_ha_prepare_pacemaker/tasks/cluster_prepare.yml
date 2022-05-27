@@ -19,6 +19,7 @@
   register: pcs_host_auth_reg
   when:
     - sap_ha_install_pacemaker_role == 'secondary'
+  delegate_to: "{{ sap_ha_prepare_pacemaker_node1_hostname }}"
 
 #- name: "SAP Pacemaker Setup - print pcs reg"
 #  debug:
