@@ -27,8 +27,3 @@
   become: true
   when:
     - sap_ha_install_pacemaker_pcsd_active.rc != 0
-
-# [A] Update /etc/hosts
-
-# - name: SAP Pacemaker Setup - [A] Update /etc/hosts
-#   include_tasks: update_etchosts.yml
